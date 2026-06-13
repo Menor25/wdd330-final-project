@@ -72,18 +72,18 @@ export async function loadHeaderFooter() {
   }
 }
 
-// export function uiEffects() {
-//     // Use event delegation to handle buttons dynamically
-//     document.addEventListener('mouseover', (e) => {
-//         const button = e.target.closest('button');
-//         if (button) {
-//             button.style.transform = 'scale(0.98)';
-//         }
-//     });
-//     document.addEventListener('mouseout', (e) => {
-//         const button = e.target.closest('button');
-//         if (button) {
-//             button.style.transform = 'scale(1)';
-//         }
-//     });
-// }
+export function uiEffects() {
+    // Use event delegation to handle buttons dynamically
+    document.addEventListener('mouseover', (e) => {
+        const button = e.target.closest('button');
+        if (button) {
+            button.style.transform = 'scale(0.98)';
+        }
+    });
+    document.addEventListener('mouseout', (e) => {
+        const button = e.target.closest('button');
+        if (button) {
+            button.style.transform = 'scale(1)';
+        }
+    });
+}
