@@ -1,0 +1,48 @@
+/* Navigation Styles */
+.navbar {
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--color-outline-variant);
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 50;
+  height: 5rem;
+}
+.navbar .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
+}
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-base);
+  color: var(--color-primary);
+}
+.nav-links {
+  display: none;
+}
+@media (min-width: 768px) {
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-gutter);
+  }
+}
+.nav-link {
+  color: var(--color-on-surface-variant);
+  transition: color 0.2s;
+  padding-bottom: 4px;
+}
+.nav-link:hover, .nav-link.active {
+  color: var(--color-primary);
+}
+.nav-link.active {
+  border-bottom: 2px solid var(--color-primary);
+}
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-stack-lg);
+}
