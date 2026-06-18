@@ -13,3 +13,6 @@ export function Modal(title, content) {
         </div>
     `;
 }
+
+
+
