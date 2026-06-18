@@ -3,6 +3,9 @@ import { renderSearch } from './pages/search.js';
 import { renderVerify } from './pages/verify.js';
 import { renderReport } from './pages/report.js';
 import { renderDashboard } from './pages/dashboard.js';
+import { renderProperty } from './pages/property.js';
+import { renderLogin } from './pages/login.js';
+import { renderRegister } from './pages/register.js';
 
 const routes = {
     '/': renderHome,
@@ -10,6 +13,9 @@ const routes = {
     '/verify': renderVerify,
     '/report': renderReport,
     '/dashboard': renderDashboard,
+    '/property': renderProperty,
+    '/login': renderLogin,
+    '/register': renderRegister,
 };
 
 export function setupRouter() {

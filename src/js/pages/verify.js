@@ -1,3 +1,5 @@
+import { loadGoogleMaps } from '../api/geoAPI.js';
+
 export function renderVerify() {
     const container = document.createElement('div');
     container.className = 'container py-24';
@@ -5,36 +7,70 @@ export function renderVerify() {
         <h1 class="text-headline-md mb-md">Verification Map</h1>
         <p class="text-body-md text-on-surface-variant mb-lg">Visualizing real estate safety across regions.</p>
         
-        <div class="bg-surface-container-highest border-variant rounded-xl flex items-center justify-center overflow-hidden" style="width: 100%; height: 500px; position: relative;">
-             <!-- Map UI Elements -->
-             <div class="bg-surface-container-lowest rounded flex flex-col gap-sm" style="position: absolute; top: 1rem; left: 1rem; padding: 0.5rem; box-shadow: 0 1px 2px rgba(0,0,0,0.1);">
-                <button class="bg-surface hover:bg-surface-variant flex items-center justify-center rounded" style="width: 2rem; height: 2rem;"><span class="material-symbols-outlined">add</span></button>
-                <button class="bg-surface hover:bg-surface-variant flex items-center justify-center rounded" style="width: 2rem; height: 2rem;"><span class="material-symbols-outlined">remove</span></button>
-             </div>
-
-             <!-- Mock Map Markers -->
-             <div class="flex items-center flex-col" style="position: absolute; top: 33%; left: 25%; cursor: pointer;">
-                 <div class="bg-secondary text-white rounded-full p-sm" style="box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);">
-                     <span class="material-symbols-outlined" style="font-size: 14px; font-variation-settings: 'FILL' 1;">location_on</span>
-                 </div>
-                 <div class="bg-surface-container-lowest border-variant text-label-sm font-label-bold rounded" style="padding: 0.25rem 0.5rem; margin-top: 0.25rem; box-shadow: 0 1px 2px rgba(0,0,0,0.1);">Verified Agent Hub</div>
-             </div>
-
-             <div class="flex items-center flex-col" style="position: absolute; top: 50%; right: 33%; cursor: pointer;">
-                 <div class="bg-error text-white rounded-full p-sm" style="box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);">
-                     <span class="material-symbols-outlined" style="font-size: 14px; font-variation-settings: 'FILL' 1;">close</span>
-                 </div>
-                 <div class="bg-surface-container-lowest text-error border-error text-label-sm font-label-bold rounded" style="border: 1px solid var(--color-error); padding: 0.25rem 0.5rem; margin-top: 0.25rem; box-shadow: 0 1px 2px rgba(0,0,0,0.1);">Scam Hotspot</div>
-             </div>
-             
-             <div class="flex items-center flex-col" style="position: absolute; bottom: 25%; left: 50%; cursor: pointer;">
-                 <div class="bg-amber-500 text-white rounded-full p-sm" style="box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);">
-                     <span class="material-symbols-outlined" style="font-size: 14px; font-variation-settings: 'FILL' 1;">warning</span>
-                 </div>
-                 <div class="bg-surface-container-lowest border-variant text-label-sm font-label-bold rounded" style="padding: 0.25rem 0.5rem; margin-top: 0.25rem; box-shadow: 0 1px 2px rgba(0,0,0,0.1);">Unverified Area</div>
-             </div>
-
+        <div id="map-wrap" class="bg-surface-container-highest border-variant rounded-xl overflow-hidden" style="width: 100%; height: 500px; position: relative;">
+             <div id="actual-map" style="width: 100%; height: 100%;"></div>
         </div>
     `;
+
+    // Initialize Map
+    setTimeout(async () => {
+        const apiKey = process.env.GOOGLE_MAPS_PLATFORM_KEY || '';
+        if (!apiKey) {
+            const mapWrap = container.querySelector('#map-wrap');
+            if (mapWrap) {
+                mapWrap.innerHTML = `
+                <div style="display:flex; align-items:center; justify-content:center; height:100%; font-family:sans-serif; text-align:center;">
+                    <div style="max-width:520px; padding:2rem;">
+                        <h2>Google Maps API Key Required</h2>
+                        <p><strong>Step 1:</strong> <a href="https://console.cloud.google.com/google/maps-apis/start" target="_blank" rel="noopener">Get an API Key</a></p>
+                        <p><strong>Step 2:</strong> Add your key as a secret in AI Studio with the specific name <code>GOOGLE_MAPS_PLATFORM_KEY</code></p>
+                    </div>
+                </div>`;
+            }
+            return;
+        }
+
+        try {
+            await loadGoogleMaps();
+            
+            const mapElement = container.querySelector('#actual-map');
+            if (!mapElement) return;
+
+            const map = new window.google.maps.Map(mapElement, {
+                center: { lat: 6.5244, lng: 3.3792 }, // Default to Lagos, Nigeria
+                zoom: 12,
+                mapId: 'DEMO_MAP_ID', // Replace with your actual Map ID if needed
+                disableDefaultUI: false,
+            });
+
+            const markers = [
+                { position: { lat: 6.4281, lng: 3.4219 }, title: 'Verified Agent Hub', type: 'verified' },
+                { position: { lat: 6.5000, lng: 3.3600 }, title: 'Scam Hotspot', type: 'scam' },
+                { position: { lat: 6.6018, lng: 3.3515 }, title: 'Unverified Area', type: 'unverified' }
+            ];
+
+            const AdvancedMarkerElement = window.google.maps.marker.AdvancedMarkerElement;
+            const PinElement = window.google.maps.marker.PinElement;
+
+            markers.forEach(async (mk) => {
+                const pin = new PinElement({
+                    background: mk.type === 'scam' ? '#B3261E' : mk.type === 'verified' ? '#4285F4' : '#F59E0B',
+                    borderColor: '#ffffff',
+                    glyphColor: '#ffffff',
+                });
+
+                new AdvancedMarkerElement({
+                    map,
+                    position: mk.position,
+                    title: mk.title,
+                    content: pin.element
+                });
+            });
+
+        } catch (error) {
+            console.error('Failed to init map', error);
+        }
+    }, 0);
+
     return container;
 }

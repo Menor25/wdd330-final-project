@@ -15,9 +15,15 @@ init();
 
 document.addEventListener('DOMContentLoaded', () => {
     const app = document.getElementById('app');
+
+    // Add Navigation container
+    const navContainer = document.createElement('div');
+    navContainer.id = 'nav-container';
+    app.appendChild(navContainer);
+
     
     // Add Navigation
-    app.innerHTML = Header();
+    Header();
     
     // Add router outlet
     const main = document.createElement('main');

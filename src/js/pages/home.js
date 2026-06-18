@@ -11,15 +11,15 @@ export function renderHome() {
             <h1 class="text-display-lg hero-title">SafeRent NG</h1>
             <p class="text-body-lg hero-subtitle">Protecting Nigerian Renters from Apartment Scams. Your vigilant shield against rental fraud.</p>
             <div class="hero-actions">
-                <div class="search-box">
+                <form id="home-search-form" class="search-box cursor-pointer hover:border-primary transition-colors">
                     <span class="material-symbols-outlined icon">search</span>
-                    <input class="text-body-md" placeholder="Search Apartment / Agent / Phone Number..." type="text"/>
-                    <button class="text-label-bold">Search</button>
-                </div>
-                <button class="btn btn-outline-error text-label-bold">
+                    <input id="home-search-input" class="text-body-md border-none outline-none flex-1 py-4" placeholder="Search Apartment / Agent / Phone Number..." type="text"/>
+                    <button type="submit" class="text-label-bold">Search</button>
+                </form>
+                <a href="/report" data-link class="btn btn-outline-error text-label-bold">
                     <span class="material-symbols-outlined">report</span>
                     Report a Scam
-                </button>
+                </a>
             </div>
         </div>
     `;
@@ -27,6 +27,18 @@ export function renderHome() {
 
     // Stats Section
     const stats = document.createElement('section');
+
+    setTimeout(() => {
+        const form = container.querySelector('#home-search-form');
+        const input = container.querySelector('#home-search-input');
+        if (form && input) {
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const query = input.value.trim();
+                window.location.href = '/search' + (query ? `?q=${encodeURIComponent(query)}` : '');
+            });
+        }
+    }, 0);
     stats.className = 'stats-section';
     stats.innerHTML = `
         <div class="container grid md-grid-cols-3 text-center">
@@ -46,7 +58,7 @@ export function renderHome() {
     `;
     container.appendChild(stats);
 
-    // Recently Verified Properties
+        // Recently Verified Properties
     const recentVerified = document.createElement('section');
     recentVerified.className = 'container py-24';
     
